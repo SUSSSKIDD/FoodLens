@@ -1,9 +1,8 @@
 import axios from 'axios';
 
 const PREDICTION_API_URL = 'https://foodlens-api-105131501134.us-central1.run.app/predict';
-const GEMINI_API_KEY = 'AIzaSyA_BAO-KctLMlNSMKuZtPNguy2x89m5-Ro'; 
+const GEMINI_API_KEY = 'AIzaSyA_BAO-KctLMlNSMKuZtPNguy2x89m5-Ro';
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
-
 
 // 🔍 Prediction API
 export const predictImage = async (file) => {
@@ -23,11 +22,23 @@ export const predictImage = async (file) => {
   }
 };
 
-// 🧠 Gemini Recipe Generator
-export const fetchGeminiRecipe = async (ingredients, language = 'en') => {
+// 🧠 Gemini Recipe Generator (Enhanced)
+export const fetchGeminiRecipe = async (
+  ingredients,
+  language = 'en',
+  diet = 'vegetarian',
+  spice = 'medium',
+  allergy = 'none'
+) => {
+  const allergyNote = allergy.trim().toLowerCase() === 'none'
+    ? ''
+    : (language === 'en'
+      ? `Avoid using the following ingredients due to allergy: ${allergy}.`
+      : `एलर्जी के कारण निम्नलिखित सामग्री का उपयोग न करें: ${allergy}।`);
+
   const prompt = language === 'en'
-    ? `Suggest a recipe using only these vegetables: ${ingredients.join(', ')}. Do not use any other vegetables. List steps clearly.`
-    : `सिर्फ इन सब्ज़ियों का उपयोग करके एक स्वादिष्ट रेसिपी सुझाएं: ${ingredients.join(', ')}। किसी अन्य सब्जी का उपयोग न करें और विधि को स्पष्ट रूप से चरणों में बताएं।`;
+    ? `Suggest a ${diet} recipe using only these vegetables: ${ingredients.join(', ')}. Do not include any other vegetables or ingredients. Spice level: ${spice}. ${allergyNote} Write the recipe clearly in steps.`
+    : `सिर्फ इन सब्ज़ियों का उपयोग करके एक ${diet} रेसिपी सुझाएं: ${ingredients.join(', ')}। कोई अन्य सब्ज़ी या सामग्री शामिल न करें। मसाले का स्तर: ${spice}। ${allergyNote} कृपया विधि को चरणों में स्पष्ट रूप से लिखें।`;
 
   try {
     const res = await fetch(GEMINI_API_URL, {

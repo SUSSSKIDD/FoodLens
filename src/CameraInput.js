@@ -8,6 +8,10 @@ const CameraInput = () => {
   const [error, setError] = useState('');
   const [language, setLanguage] = useState('en');
 
+  const [diet, setDiet] = useState("vegetarian");
+  const [spice, setSpice] = useState("medium");
+  const [allergy, setAllergy] = useState("none");
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -23,7 +27,7 @@ const CameraInput = () => {
       setDetections(response.detections);
 
       const veggieList = response.detections.map(d => d.class);
-      const recipeResponse = await fetchGeminiRecipe(veggieList, language);
+      const recipeResponse = await fetchGeminiRecipe(veggieList, language, diet, spice, allergy);
       setRecipe(recipeResponse);
     } else if (response && response.detections && response.detections.length === 0) {
       setError("No vegetables detected.");
@@ -40,7 +44,7 @@ const CameraInput = () => {
 
     if (detections.length > 0) {
       const veggieList = detections.map(d => d.class);
-      fetchGeminiRecipe(veggieList, newLang).then(setRecipe);
+      fetchGeminiRecipe(veggieList, newLang, diet, spice, allergy).then(setRecipe);
     }
   };
 
@@ -50,6 +54,35 @@ const CameraInput = () => {
         <button onClick={toggleLanguage}>
           Switch to {language === 'en' ? 'Hindi' : 'English'}
         </button>
+      </div>
+
+      <div style={{ marginBottom: '1rem' }}>
+        <label><b>Diet Preference: </b></label>
+        <select value={diet} onChange={(e) => setDiet(e.target.value)}>
+          <option value="vegetarian">Vegetarian</option>
+          <option value="non-vegetarian">Non-Vegetarian</option>
+          <option value="jain">Jain</option>
+        </select>
+
+        <br /><br />
+
+        <label><b>Spice Level: </b></label>
+        <select value={spice} onChange={(e) => setSpice(e.target.value)}>
+          <option value="mild">Mild</option>
+          <option value="medium">Medium</option>
+          <option value="spicy">Spicy</option>
+        </select>
+
+        <br /><br />
+
+        <label><b>Allergy (optional): </b></label>
+        <input
+          type="text"
+          placeholder="e.g. garlic, onion (or none)"
+          value={allergy}
+          onChange={(e) => setAllergy(e.target.value)}
+          style={{ width: '70%', padding: '4px' }}
+        />
       </div>
 
       <input
