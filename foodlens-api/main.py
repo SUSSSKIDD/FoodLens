@@ -48,7 +48,7 @@ async def predict(file: UploadFile = File(...)):
             x1, y1, x2, y2, conf, class_id = map(float, det[:6])
             class_id = int(class_id)
 
-            if conf > 0.3 and 0 <= class_id < len(CLASS_NAMES):
+            if conf > 0.8 and 0 <= class_id < len(CLASS_NAMES):
                 results.append({
                     "class": CLASS_NAMES[class_id],
                     "confidence": round(conf, 3),

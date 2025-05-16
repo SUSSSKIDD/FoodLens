@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { predictImage } from './api';
+import { predictImage, fetchGeminiRecipe } from './api';
 
 const CameraInput = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [detections, setDetections] = useState([]);
+  const [recipe, setRecipe] = useState('');
   const [error, setError] = useState('');
+  const [language, setLanguage] = useState('en');
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -13,11 +15,16 @@ const CameraInput = () => {
     setImagePreview(URL.createObjectURL(file));
     setDetections([]);
     setError('');
+    setRecipe('');
 
     const response = await predictImage(file);
 
     if (response && response.detections && response.detections.length > 0) {
       setDetections(response.detections);
+
+      const veggieList = response.detections.map(d => d.class);
+      const recipeResponse = await fetchGeminiRecipe(veggieList, language);
+      setRecipe(recipeResponse);
     } else if (response && response.detections && response.detections.length === 0) {
       setError("No vegetables detected.");
     } else {
@@ -27,14 +34,30 @@ const CameraInput = () => {
     console.log("🔍 API Response:", response);
   };
 
+  const toggleLanguage = () => {
+    const newLang = language === 'en' ? 'hi' : 'en';
+    setLanguage(newLang);
+
+    if (detections.length > 0) {
+      const veggieList = detections.map(d => d.class);
+      fetchGeminiRecipe(veggieList, newLang).then(setRecipe);
+    }
+  };
+
   return (
     <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+      <div style={{ marginBottom: '1rem' }}>
+        <button onClick={toggleLanguage}>
+          Switch to {language === 'en' ? 'Hindi' : 'English'}
+        </button>
+      </div>
+
       <input
         type="file"
         accept="image/*"
         capture="environment"
         onChange={handleImageChange}
-        style={{ margin: '1rem 0' }}
+        style={{ marginBottom: '1rem' }}
       />
 
       {imagePreview && (
@@ -59,6 +82,24 @@ const CameraInput = () => {
             </li>
           ))}
         </ul>
+      )}
+
+      {recipe && (
+        <div
+          style={{
+            marginTop: '1.5rem',
+            backgroundColor: '#f2f2f2',
+            padding: '1rem',
+            borderRadius: '10px',
+            textAlign: 'left',
+            maxWidth: '90%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}
+        >
+          <h3>🍲 Suggested Recipe ({language === 'en' ? 'English' : 'Hindi'})</h3>
+          <p style={{ whiteSpace: 'pre-wrap' }}>{recipe}</p>
+        </div>
       )}
 
       {error && (
