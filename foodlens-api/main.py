@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -7,6 +10,8 @@ import io
 import onnxruntime as ort
 import uvicorn
 import os
+from auth import router as auth_router  # Import authentication routes
+from recipes import router as recipe_router
 
 # Initialize FastAPI
 app = FastAPI()
@@ -14,11 +19,16 @@ app = FastAPI()
 # Enable CORS for all origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can restrict to frontend URL later
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include auth router
+app.include_router(auth_router)
+app.include_router(recipe_router)
+
 
 # Class labels (in correct order)
 CLASS_NAMES = ["bean", "bitter gourd", "bottle gourd", "broccoli", "cabbage"]
@@ -67,9 +77,6 @@ async def predict(file: UploadFile = File(...)):
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"error": str(e)})
 
-
 if __name__ == "__main__":
-    import uvicorn
-    import os
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("main:app", host="0.0.0.0", port=port)
