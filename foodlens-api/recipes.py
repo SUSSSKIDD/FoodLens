@@ -7,33 +7,32 @@ from utils import verify_token
 router = APIRouter()
 bearer = HTTPBearer()
 
+from datetime import datetime
+
 @router.post("/save_recipe")
-def save_recipe(data: dict, credentials: HTTPAuthorizationCredentials = Depends(bearer)):
+def save_recipe(recipe: dict, credentials: HTTPAuthorizationCredentials = Depends(bearer)):
     user = verify_token(credentials.credentials)
     if not user:
         raise HTTPException(status_code=403, detail="Invalid token")
 
-    new_entry = {
-        "user_email": user["sub"],
-        "title": data["title"],
-        "ingredients": data["ingredients"],
-        "text": data["text"],
-        "language": data.get("language", "en"),
-        "notes": data.get("notes", "")
-    }
+    recipe["user_email"] = user["sub"]
+    recipe["created_at"] = datetime.utcnow()  # ⏰ Add timestamp
+    recipes_collection.insert_one(recipe)
+    return {"msg": "Recipe saved successfully"}
 
-    recipes_collection.insert_one(new_entry)
-    return {"msg": "Recipe saved!"}
 
 
 @router.get("/my_recipes")
-def get_my_recipes(credentials: HTTPAuthorizationCredentials = Depends(bearer)):
+def my_recipes(credentials: HTTPAuthorizationCredentials = Depends(bearer)):
     user = verify_token(credentials.credentials)
     if not user:
         raise HTTPException(status_code=403, detail="Invalid token")
 
-    user_recipes = list(recipes_collection.find({"user_email": user["sub"]}, {"_id": 0}))
-    return {"recipes": user_recipes}
+    recipes = list(recipes_collection.find({"user_email": user["sub"]}).sort("created_at", -1))
+    for r in recipes:
+        r["_id"] = str(r["_id"])
+    return {"recipes": recipes}
+
 
 @router.post("/update_recipe")
 def update_recipe(data: dict, credentials: HTTPAuthorizationCredentials = Depends(bearer)):
@@ -50,9 +49,10 @@ def update_recipe(data: dict, credentials: HTTPAuthorizationCredentials = Depend
     )
 
     if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Recipe not found or no changes")
+        raise HTTPException(status_code=404, detail="Recipe not found or unchanged")
 
     return {"msg": "Recipe updated successfully"}
+
 
 @router.delete("/delete_recipe")
 def delete_recipe(title: str, credentials: HTTPAuthorizationCredentials = Depends(bearer)):
