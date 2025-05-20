@@ -33,40 +33,6 @@ def my_recipes(credentials: HTTPAuthorizationCredentials = Depends(bearer)):
         recipe["_id"] = str(recipe["_id"])
     return {"recipes": recipes}
 
-@router.post("/update_recipe")
-async def update_recipe(request: Request, credentials: HTTPAuthorizationCredentials = Depends(bearer)):
-    user = verify_token(credentials.credentials)
-    if not user:
-        raise HTTPException(status_code=403, detail="Invalid token")
-
-    try:
-        data = await request.json()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid or missing JSON body")
-
-    if "title" not in data:
-        raise HTTPException(status_code=422, detail="Missing 'title' in request body.")
-
-    update_fields = {}
-    if "note" in data:
-        update_fields["note"] = data["note"]
-    if "recipe" in data:
-        update_fields["recipe"] = data["recipe"]
-
-    if not update_fields:
-        raise HTTPException(status_code=422, detail="No fields to update provided.")
-
-    result = recipes_collection.update_one(
-        {"user_email": user["sub"], "title": data["title"]},
-        {"$set": update_fields}
-    )
-
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Recipe not found.")
-
-    return {"msg": "Recipe updated successfully"}
-
-
 # ✅ Delete recipe by title
 @router.delete("/delete_recipe")
 def delete_recipe(title: str, credentials: HTTPAuthorizationCredentials = Depends(bearer)):
