@@ -1,20 +1,20 @@
+import jwt
 import os
-from jose import jwt, JWTError
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
 
-# Load secret key from environment variable or fallback
-SECRET_KEY = os.getenv("JWT_SECRET", "fallback-secret")
-ALGORITHM = "HS256"
-EXPIRES_MINUTES = 24 * 60  # 24 hours
+load_dotenv()
+SECRET_KEY = os.getenv("JWT_SECRET")
 
-def create_token(data: dict):
+def create_token(data: dict, expires_delta: timedelta = timedelta(hours=2)):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=EXPIRES_MINUTES)
+    expire = datetime.utcnow() + expires_delta
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(to_encode, SECRET_KEY, algorithm="HS256")
 
 def verify_token(token: str):
     try:
-        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        return payload
+    except jwt.PyJWTError:
         return None

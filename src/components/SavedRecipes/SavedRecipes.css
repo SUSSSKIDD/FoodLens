@@ -1,29 +1,29 @@
 .saved-recipes-container {
-    max-width: 700px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background-color: #fefefe;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .recipe-card {
-    background-color: #f2f2f2;
-    padding: 1rem;
-    margin: 1rem 0;
-    border-radius: 8px;
-    line-height: 1.5;
-  }
-  
-  .recipe-card button {
-    margin-right: 10px;
-    margin-top: 10px;
-    padding: 6px 12px;
-    cursor: pointer;
-  }
-  
-  .error {
-    color: red;
-    font-style: italic;
-  }
-  
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #fefefe;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-card {
+  background-color: #f2f2f2;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+.recipe-card button {
+  margin-right: 10px;
+  margin-top: 10px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+  font-style: italic;
+}
+

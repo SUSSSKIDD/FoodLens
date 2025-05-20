@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@react-oauth/google": "^0.12.2",
     "axios": "^1.6.0",
+    "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^7.6.0",
-    "react-scripts": "5.0.1"
+    "react-router-dom": "^7.6.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -24,5 +25,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "react-scripts": "^5.0.1"
   }
 }

@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import CameraInput from './CameraInput';
 import Profile from './pages/Profile';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+import GoogleLoginButton from './components/GoogleLoginButton';
 
 function App() {
-  const [userEmail, setUserEmail] = useState('');
+  const [user, setUser] = useState(null); // user object: { email, name }
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -17,12 +16,8 @@ function App() {
         },
       })
         .then((res) => res.ok ? res.json() : Promise.reject())
-        .then((data) => {
-          setUserEmail(data.email);
-        })
-        .catch(() => {
-          setUserEmail('');
-        });
+        .then((data) => setUser(data))
+        .catch(() => setUser(null));
     }
   }, []);
 
@@ -32,10 +27,16 @@ function App() {
         <nav style={{ padding: '1rem', background: '#eee' }}>
           <Link to="/" style={{ marginRight: '1rem' }}>📷 Camera</Link>
           <Link to="/profile" style={{ marginRight: '1rem' }}>📚 Saved Recipes</Link>
-          <Link to="/login" style={{ marginRight: '1rem' }}>🔐 Login</Link>
-          <Link to="/signup">🆕 Sign Up</Link>
-          {userEmail && (
-            <span style={{ marginLeft: '1rem', fontWeight: 'bold' }}>👋 {userEmail}</span>
+
+          {!user && (
+            <span style={{ marginRight: '1rem' }}>
+              <GoogleLoginButton />
+            </span>
+          )}
+          {user && (
+            <span style={{ fontWeight: 'bold' }}>
+              👋 {user.name || user.email}
+            </span>
           )}
         </nav>
 
@@ -44,8 +45,6 @@ function App() {
         <Routes>
           <Route path="/" element={<CameraInput />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
         </Routes>
       </div>
     </Router>
