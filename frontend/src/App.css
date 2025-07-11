@@ -1,0 +1,41 @@
+/* Remove most old styles, add new utility classes
+
+.hero {
+  background: linear-gradient(120deg, #fbbf24 0%, #34d399 100%);
+  color: #fff;
+  border-radius: 2rem;
+  padding: 3rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(52,211,153,0.12);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/food.png');
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.card-animated {
+  @apply card fade-in;
+}
+
+.btn-gradient {
+  background: linear-gradient(90deg, #fbbf24 0%, #34d399 100%);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px 0 rgba(52,211,153,0.10);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.btn-gradient:hover {
+  background: linear-gradient(90deg, #34d399 0%, #fbbf24 100%);
+  box-shadow: 0 4px 16px 0 rgba(52,211,153,0.18);
+  transform: translateY(-2px) scale(1.03);
+} */
