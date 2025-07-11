@@ -3,11 +3,10 @@ env: standard
 
 instance_class: F1
 env_variables:
-  MONGO_URI: "mongodb+srv://pratyushmalviya2025:pmukIbKPFPNiRfoS@foodlens.uqadoqk.mongodb.net/"
-  JWT_SECRET: "684ffad3b3853448585d93132902034834c9fd949ad4348c4efd00bfc6b21afc03e8b1d5fb829611cbdb8c37ec4896176bdf6830da4dbf92c00cd69262dfc27dc"
-  GEMINI_API_KEY: "AIzaSyCx6-K9LqBKHiB3eLSt0q3Zcq-jGSNmJXg"
-  GEMINI_CHAT_API_KEY: "AIzaSyA5PyQQmQhaScBchrPgBh3eVbNBLWu83JE"
-  NODE_ENV: "production"
+  MONGO_URI: input you env variables
+  JWT_SECRET: input you env variables
+  GEMINI_API_KEY: input you env variables
+  GEMINI_CHAT_API_KEY: input you env variables
   PORT: "8080"
   ONNXRUNTIME_EXECUTION_PROVIDERS: "cpu"
 
